@@ -1,3 +1,4 @@
+// app/about/page.tsx
 "use client";
 
 import { motion } from "framer-motion";
@@ -41,7 +42,6 @@ export default function AboutPage() {
 
   return (
     <main className="min-h-screen py-20 px-6 sm:px-10 max-w-6xl mx-auto">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -56,7 +56,7 @@ export default function AboutPage() {
             className="w-32 h-32 sm:w-40 sm:h-40 relative rounded-full overflow-hidden shadow-md"
           >
             <Image
-              src="/iltire.jpg" // ✅ make sure to place your image in public/me.jpg
+              src="/iltire.jpg"
               alt="Eng Abdalla"
               fill
               className="object-cover"
@@ -68,14 +68,13 @@ export default function AboutPage() {
           About Me
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          I'm <span className="font-semibold">Eng Abdalla</span>, a senior full-stack
+          I&apos;m <span className="font-semibold">Eng Abdalla</span>, a senior full-stack
           developer crafting fast, scalable, and delightful web experiences with{" "}
           <strong>Next.js</strong>, <strong>TypeScript</strong>,{" "}
           <strong>Tailwind CSS</strong>, and <strong>MongoDB</strong>.
         </p>
       </motion.div>
 
-      {/* Tech Stack */}
       <motion.section
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -102,7 +101,6 @@ export default function AboutPage() {
         </div>
       </motion.section>
 
-      {/* Resume */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}

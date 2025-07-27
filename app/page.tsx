@@ -16,7 +16,8 @@ export default function HomePage() {
         className="space-y-6"
       >
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
-          Hi, I'm <span className="text-blue-600 dark:text-blue-400">Eng Abdalla</span>
+         Hi, I&apos;m <span className="text-blue-600 dark:text-blue-400">Eng Abdalla</span>
+
         </h1>
 
         <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto">
