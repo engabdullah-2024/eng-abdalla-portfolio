@@ -1,24 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import emailjs from "emailjs-com";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Github,
-  Linkedin,
-  Twitter,
-  Mail,
- 
-} from "lucide-react";
+import { Github, Linkedin, Twitter, Mail } from "lucide-react";
+
+// 🔁 Replace these with your real EmailJS credentials
+const SERVICE_ID = "service_emzhgfc";
+const TEMPLATE_ID = "template_c06ycsp";
+const PUBLIC_KEY = "6nbY0x5vkTOwEohEU";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Simple client-side validation
   function validate() {
     const newErrors: { [key: string]: string } = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
@@ -32,16 +32,28 @@ export default function ContactPage() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
-    // TODO: Replace with actual form submit logic (e.g., API call)
-    setSubmitted(true);
-    setForm({ name: "", email: "", message: "" });
+
+    setLoading(true);
+    emailjs
+      .send(SERVICE_ID, TEMPLATE_ID, form, PUBLIC_KEY)
+      .then(() => {
+        setSubmitted(true);
+        setForm({ name: "", email: "", message: "" });
+      })
+      .catch((error) => {
+        console.error("EmailJS Error:", error);
+        alert("Something went wrong. Please try again later.");
+      })
+      .finally(() => setLoading(false));
   }
 
   return (
@@ -130,8 +142,8 @@ export default function ContactPage() {
           )}
         </div>
 
-        <Button type="submit" size="lg" className="w-full">
-          Send Message
+        <Button type="submit" size="lg" className="w-full" disabled={loading}>
+          {loading ? "Sending..." : "Send Message"}
         </Button>
 
         {submitted && (
@@ -141,7 +153,6 @@ export default function ContactPage() {
         )}
       </motion.form>
 
-      {/* Social Links */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
