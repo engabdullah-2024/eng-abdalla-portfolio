@@ -107,7 +107,7 @@ export default function AboutPage() {
         transition={{ delay: 0.6, duration: 0.6 }}
         className="text-center"
       >
-        <Link href="/Eng-Abdalla-Resume.pdf" target="_blank">
+        <Link href="/abdalla.pdf" target="_blank">
           <Button
             size="lg"
             variant="default"
