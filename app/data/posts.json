@@ -54,14 +54,15 @@
     "image": "/images/nextjs.jpeg"
   },
   {
-    "slug": "javascript-best-practices-2025",
-    "title": "JavaScript Best Practices in 2025",
-    "excerpt": "Write cleaner, more efficient JavaScript with these pro tips.",
-    "content": "Modern JavaScript is cleaner and more powerful than ever. Here's what to follow:\n\n- Prefer `const` and `let` over `var`\n- Use arrow functions and destructuring\n- Master async/await for cleaner promises\n- Use ESLint and Prettier to enforce consistency\n\nKeep your code maintainable and modular.",
-    "author": "Eng Abdalla",
-    "date": "2025-08-01",
-    "image": "/images/js.png"
-  },
+  "slug": "javascript-best-practices-2025",
+  "title": "JavaScript Best Practices in 2025",
+  "excerpt": "Master JavaScript from beginner to advanced with the latest best practices to write clean, efficient, and powerful code.",
+  "content": "JavaScript has come a long way in 2025. Whether you're just starting out or already building production-grade applications, mastering these practices will make you a better developer.\n\n## 🚀 Beginner Essentials\n\n### 1. Use `const` and `let` instead of `var`\nAvoid `var`—it’s outdated and can cause bugs due to hoisting. Use `const` for constants and `let` for variables that change.\n\n```js\nconst username = 'Eng Abdalla';\nlet score = 100;\n```\n\n### 2. Understand Data Types\nJavaScript has several types: `string`, `number`, `boolean`, `null`, `undefined`, `object`, and `symbol`.\n\n```js\nlet age = 25; // number\nlet name = 'Ali'; // string\nlet isLoggedIn = true; // boolean\n```\n\n### 3. Use Functions to Organize Code\nFunctions make your code reusable and easier to understand.\n\n```js\nfunction greet(name) {\n  return `Hello, ${name}!`;\n}\n```\n\n## 🧠 Intermediate Practices\n\n### 4. Use Arrow Functions\nShorter syntax and no need to bind `this`.\n\n```js\nconst add = (a, b) => a + b;\n```\n\n### 5. Destructuring\nExtract values from arrays or objects in a clean way.\n\n```js\nconst user = { name: 'Ali', age: 21 };\nconst { name, age } = user;\n```\n\n### 6. Template Literals\nUse backticks `` ` `` for multi-line strings and easy variable embedding.\n\n```js\nconst welcome = `Hello ${name}, age ${age}`;\n```\n\n### 7. Spread and Rest Operators\nThey simplify array/object handling.\n\n```js\nconst nums = [1, 2, 3];\nconst allNums = [...nums, 4];\n```\n\n### 8. Array Methods\nUse `.map()`, `.filter()`, `.reduce()` for cleaner data handling.\n\n```js\nconst scores = [80, 90, 100];\nconst passed = scores.filter(score => score >= 90);\n```\n\n## ⚙️ Advanced Best Practices\n\n### 9. Master Async/Await\nAsynchronous code made cleaner.\n\n```js\nconst fetchData = async () => {\n  try {\n    const res = await fetch('/api/data');\n    const data = await res.json();\n    console.log(data);\n  } catch (error) {\n    console.error(error);\n  }\n};\n```\n\n### 10. Modularize Your Code\nSplit logic into modules.\n\n```js\n// utils/calc.js\nexport const add = (a, b) => a + b;\n```\n\n### 11. Use ESLint and Prettier\nEnsure code quality and formatting.\n\n```bash\nnpm install eslint prettier --save-dev\n```\n\n### 12. Learn Type Coercion & Equality\nUnderstand how `==` vs `===` works.\n\n```js\nconsole.log('5' == 5);  // true (loose)\nconsole.log('5' === 5); // false (strict)\n```\n\n### 13. Use Optional Chaining & Nullish Coalescing\nSafer property access.\n\n```js\nconst city = user?.address?.city ?? 'Unknown';\n```\n\n### 14. Explore TypeScript (Optional)\nA powerful superset of JavaScript for large-scale apps.\n\n```ts\nconst greet = (name: string): string => `Hi ${name}`;\n```\n\n### 15. Test Your Code\nUse tools like **Jest**, **Vitest**, or **Mocha** to write unit tests.\n\n```js\ntest('adds numbers', () => {\n  expect(add(2, 3)).toBe(5);\n});\n```\n\n---\n\n## ✨ Final Words\nJavaScript in 2025 is about writing clean, readable, and maintainable code. Whether you're learning the basics or exploring advanced topics, always:\n\n- Keep your code modular\n- Comment smartly\n- Test regularly\n- Stay updated with the latest ECMAScript features\n\n**Happy coding, and may your bugs be few!**",
+  "author": "Eng Abdalla",
+  "date": "2025-08-01",
+  "image": "/images/js.png"
+},
+
   {
     "slug": "building-secure-auth-systems",
     "title": "Building Secure Authentication Systems",
