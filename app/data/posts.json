@@ -1,0 +1,92 @@
+[
+  {
+    "slug": "how-to-become-fullstack-dev",
+    "title": "How to Become a Fullstack Developer",
+    "excerpt": "A fullstack developer handles both frontend and backend, enabling complete app development.",
+    "content": "Becoming a fullstack developer means mastering both front-end and back-end development. It allows you to build complete applications from start to finish.\n\n### 1. Learn HTML, CSS, and JavaScript\nThese are the foundational web technologies. You must master the DOM, CSS Flexbox/Grid, and vanilla JS.\n\n### 2. Pick a Frontend Framework\nChoose React, Vue, or Angular. React is highly popular and works well with Next.js.\n\n### 3. Learn Backend Development\nNode.js with Express is a great start. You can also explore Django (Python) or Laravel (PHP).\n\n### 4. Master Databases\nLearn SQL (PostgreSQL, MySQL) and NoSQL (MongoDB). Understand CRUD operations.\n\n### 5. APIs\nBuild REST APIs and explore GraphQL later.\n\n### 6. Authentication\nLearn JWT, OAuth, and sessions.\n\n### 7. Git & GitHub\nUse version control for collaboration.\n\n### 8. Deployment\nDeploy with Vercel, Netlify, or DigitalOcean.\n\n### 9. Projects & Practice\nBuild real-world apps: blogs, dashboards, portfolios.\n\nBeing fullstack opens up remote jobs, freelancing, and startup opportunities.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-05",
+    "image": "/images/fullstack.jpg"
+  },
+  {
+    "slug": "how-to-build-modern-portfolio",
+    "title": "How to Build a Modern Portfolio",
+    "excerpt": "A professional online portfolio is essential for showcasing your skills and landing jobs.",
+    "content": "Creating a modern portfolio shows your skills to the world. Here's how:\n\n### 1. Choose the Right Stack\nUse Next.js and Tailwind CSS. They're fast, customizable, and SEO-friendly.\n\n### 2. Focus on UX/UI\nClean layout, readable fonts, and good spacing matter. Use mobile-first responsive design.\n\n### 3. Add Key Sections\nInclude an About section, Skills, Projects, Blog, and Contact.\n\n### 4. Host It\nDeploy it using Vercel or Netlify. Connect your domain.\n\n### 5. Keep It Updated\nUpdate regularly with your latest projects.\n\nA well-made portfolio can land you internships, freelance gigs, or your first dev job.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-04",
+    "image": "/images/portfolio.png"
+  },
+  {
+    "slug": "mastering-tailwind-css",
+    "title": "Mastering Tailwind CSS for Modern UI",
+    "excerpt": "Tailwind CSS helps you create sleek and responsive designs with utility-first classes.",
+    "content": "Tailwind CSS is the go-to framework for building modern, scalable UIs. It helps avoid bloated stylesheets and promotes consistency.\n\n### Benefits:\n- Mobile-first responsive classes\n- Built-in dark mode support\n- Component extraction and reuse\n- Easy customization via `tailwind.config.js`\n\nLearn it alongside React or Next.js for ultimate speed and flexibility.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-03",
+    "image": "/images/tailwind.jpeg"
+  },
+  {
+    "slug": "top-ai-tools-for-developers",
+    "title": "Top AI Tools for Developers in 2025",
+    "excerpt": "AI tools like Copilot and ChatGPT are changing how developers write code.",
+    "content": "Here are the most powerful AI tools for coders:\n\n### 1. GitHub Copilot\nYour AI pair programmer inside VS Code.\n\n### 2. ChatGPT\nDebug, write, and optimize code with natural language.\n\n### 3. Tabnine\nAuto-completion powered by deep learning.\n\n### 4. CodeWhisperer (Amazon)\nGreat for AWS developers.\n\nIntegrating these tools boosts productivity and reduces repetitive work.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-03",
+    "image": "/images/top.png"
+  },
+  {
+    "slug": "cybersecurity-tips-for-devs",
+    "title": "Top Cybersecurity Tips for Web Developers",
+    "excerpt": "Learn how to secure your apps and data from real-world threats.",
+    "content": "Web developers must take security seriously. Key practices:\n\n- Sanitize user inputs to prevent XSS/SQL Injection\n- Use HTTPS and Content Security Policies\n- Secure APIs with tokens and rate limiting\n- Enable 2FA and use hashed passwords\n- Keep dependencies up-to-date\n\nSecurity is not a feature—it's a responsibility.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-02",
+    "image": "/images/cyper.jpeg"
+  },
+  {
+    "slug": "roadmap-to-nextjs",
+    "title": "The 2025 Next.js Roadmap for Developers",
+    "excerpt": "Next.js is evolving fast. Stay ahead with this roadmap.",
+    "content": "Next.js combines frontend and backend in one powerful framework. Focus on:\n\n- App Router & Server Actions\n- Middleware and Edge Functions\n- Image and font optimization\n- Metadata API for SEO\n\nProjects using Next.js scale well from personal blogs to SaaS platforms.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-02",
+    "image": "/images/nextjs.jpeg"
+  },
+  {
+    "slug": "javascript-best-practices-2025",
+    "title": "JavaScript Best Practices in 2025",
+    "excerpt": "Write cleaner, more efficient JavaScript with these pro tips.",
+    "content": "Modern JavaScript is cleaner and more powerful than ever. Here's what to follow:\n\n- Prefer `const` and `let` over `var`\n- Use arrow functions and destructuring\n- Master async/await for cleaner promises\n- Use ESLint and Prettier to enforce consistency\n\nKeep your code maintainable and modular.",
+    "author": "Eng Abdalla",
+    "date": "2025-08-01",
+    "image": "/images/js.png"
+  },
+  {
+    "slug": "building-secure-auth-systems",
+    "title": "Building Secure Authentication Systems",
+    "excerpt": "Learn to implement secure login flows with JWT, OAuth, and best practices.",
+    "content": "User authentication is a critical part of any app. Here's how to get it right:\n\n- Use JWT or session-based authentication securely\n- Protect tokens in `httpOnly` cookies\n- Add rate limiting and lockout after failed attempts\n- Use libraries like `bcrypt` for password hashing\n\nNever roll your own crypto.",
+    "author": "Eng Abdalla",
+    "date": "2025-07-31",
+    "image": "/images/sec.jpeg"
+  },
+  {
+    "slug": "react-performance-boosters",
+    "title": "React Performance Boosters for 2025",
+    "excerpt": "Make your React apps fast and scalable with these techniques.",
+    "content": "React apps can be snappy and smooth with the right optimizations:\n\n- Use `React.memo()` and `useMemo()` wisely\n- Lazy-load components with dynamic imports\n- Split bundles using code-splitting\n- Monitor performance using React DevTools\n\nAlways profile before optimizing.",
+    "author": "Eng Abdalla",
+    "date": "2025-07-30",
+    "image": "/images/reactjs.png"
+  },
+  {
+    "slug": "future-of-ai-in-web-dev",
+    "title": "The Future of AI in Web Development",
+    "excerpt": "From code generation to smart UIs, AI is reshaping web development.",
+    "content": "AI is becoming an integral part of how we build the web:\n\n- Auto-generating layouts and components\n- Enhancing accessibility with AI voice/text support\n- AI-powered testing and bug fixing\n- AI-driven personalization and recommendations\n\nAdapt now to stay relevant in the next wave of web innovation.",
+    "author": "Eng Abdalla",
+    "date": "2025-07-29",
+    "image": "/images/ai.jpeg"
+  }
+]

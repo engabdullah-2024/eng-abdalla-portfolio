@@ -9,6 +9,7 @@ import {
   SiExpress,
   SiGithub,
   SiJavascript,
+  SiShadcnui 
 } from "react-icons/si";
 
 export interface Skill {
@@ -28,4 +29,5 @@ export const skills: Skill[] = [
   { name: "Express.js", Icon: SiExpress, color: "text-gray-700 dark:text-gray-300" },
   { name: "GitHub", Icon: SiGithub, color: "text-black dark:text-white" },
   { name: "JavaScript", Icon: SiJavascript, color: "text-yellow-400" },
+  { name: "Shadcn", Icon: SiShadcnui, color: "text-black-" },
 ];
