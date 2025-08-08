@@ -39,7 +39,7 @@ export const projects: Project[] = [
     ],
     liveLink: "https://eng-abdalla-portfolio.vercel.app/", // replace with your live portfolio URL
   githubLink: "https://github.com/engabdullah-2024/portfolio", // replace if needed
-  image: "/images/portfolio.png",
+  image: "/images/portfolio.PNG",
   },
   {
     title: "E-commerce",
@@ -48,7 +48,7 @@ export const projects: Project[] = [
     tech: ["MongoDB", "Express", "React", "Node.js"],
     liveLink: "#",
     githubLink: "https://github.com/engabdullah-2024/e-commerce",
-    image: "/images/eco.png",
+    image: "/images/eco.PNG",
   },
 {
   title: "Calculator",
@@ -75,7 +75,7 @@ export const projects: Project[] = [
   tech: ["Next.js", "TypeScript", "Tailwind CSS", "Shadcn UI", "Framer Motion"],
   liveLink: "https://dugsi-hub-soma.vercel.app/", // Replace with actual live URL
   githubLink: "https://github.com/engabdullah-2024/dugsi-hub", // Replace with actual repo if different
-  image: "/images/dugsi.png", // Replace with relevant image path
+  image: "/images/dugsi.PNG", // Replace with relevant image path
 },
 
 
