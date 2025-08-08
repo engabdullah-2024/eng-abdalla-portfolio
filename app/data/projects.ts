@@ -57,7 +57,7 @@ export const projects: Project[] = [
   tech: ["JavaScript", "Tailwind CSS"],
   liveLink: "https://calculator-app-chi-vert.vercel.app/", // replace with actual live link if available
   githubLink: "https://github.com/engabdullah-2024/calculator", // update if different
-  image: "/images/cal.png",
+  image: "/images/cal.PNG",
 },
 {
   title: "Cimilo Tracker",
@@ -66,7 +66,7 @@ export const projects: Project[] = [
   tech: ["JavaScript", "Tailwind CSS"],
   liveLink: "https://calculator-app-chi-vert.vercel.app/", // Update if you have a more relevant URL
   githubLink: "https://github.com/engabdullah-2024/calculator", // Update if different repo
-  image: "/images/cimilo.png",
+  image: "/images/cimilo.PNG",
 },
 {
   title: "Dugsi Hub",
