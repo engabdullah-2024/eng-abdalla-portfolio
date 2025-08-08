@@ -9,8 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Github, Linkedin, Twitter, Mail } from "lucide-react";
 
 // 🔁 Replace these with your real EmailJS credentials
-const SERVICE_ID = "service_emzhgfc";
-const TEMPLATE_ID = "template_c06ycsp";
+const SERVICE_ID = "service_oab4tqx";
+const TEMPLATE_ID = "template_yy6fly9";
 const PUBLIC_KEY = "6nbY0x5vkTOwEohEU";
 
 export default function ContactPage() {

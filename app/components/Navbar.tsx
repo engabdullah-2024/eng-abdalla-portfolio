@@ -19,7 +19,6 @@ export default function Navbar() {
     { label: "About", href: "/about", Icon: User },
     { label: "Projects", href: "/projects", Icon: FolderOpen },
     { label: "Skills", href: "/skills", Icon: Cpu },
-    { label: "Blog", href: "/blog", Icon: Cpu },
     { label: "Contact", href: "/contact", Icon: Mail },
     
   ];
