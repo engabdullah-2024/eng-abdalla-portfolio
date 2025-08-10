@@ -36,10 +36,6 @@ yarn-error.log*
 # vercel
 .vercel
 
-# Ignore the about page file
-about/page.tsx
-
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
