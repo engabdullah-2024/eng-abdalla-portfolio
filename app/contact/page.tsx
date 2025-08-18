@@ -1,12 +1,21 @@
+// ' aops: this is a client component (uses hooks, browser-only apis)
 "use client";
 
+// ' aops: core react hooks
 import { useRef, useState } from "react";
-// ✅ Prefer the maintained browser SDK
+
+// ' aops: maintained browser sdk for EmailJS (no window hacks required)
 import emailjs from "@emailjs/browser";
+
+// ' aops: ui motion for subtle entrances/hover
 import { motion } from "framer-motion";
+
+// ' aops: your design system components (shadcn/ui)
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+
+// ' aops: icon pack (tree-shaken)
 import {
   Github,
   Linkedin,
@@ -20,21 +29,24 @@ import {
   XCircle,
 } from "lucide-react";
 
-// 🔁 Your real EmailJS credentials
+// ' aops: EmailJS credentials (consider moving to env if you proxy via an API route)
 const SERVICE_ID = "service_oab4tqx";
 const TEMPLATE_ID = "template_yy6fly9";
 const PUBLIC_KEY = "6nbY0x5vkTOwEohEU";
 
+// ' aops: strict form state typing
+type ServiceKind = "Web Design" | "Web Development" | "Graphic Design" | "Web Hosting" | "";
 type FormState = {
   name: string;
   email: string;
-  service: "Web Design" | "Web Development" | "Graphic Design" | "Web Hosting" | "";
+  service: ServiceKind;
   message: string;
-  // Honeypot (hidden) to deter bots
+  // ' aops: honeypot field (hidden) to trap bots
   website?: string;
 };
 
 export default function ContactPage() {
+  // ' aops: local state for form + ui flags
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -45,8 +57,11 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [status, setStatus] = useState<null | { ok: boolean; msg: string }>(null);
   const [loading, setLoading] = useState(false);
+
+  // ' aops: ref to allow native reset()
   const formRef = useRef<HTMLFormElement>(null);
 
+  // ' aops: synchronous client-side validation (fast feedback)
   function validate() {
     const newErrors: { [key: string]: string } = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
@@ -56,7 +71,7 @@ export default function ContactPage() {
     }
     if (!form.service) newErrors.service = "Please select a service";
     if (!form.message.trim()) newErrors.message = "Message cannot be empty";
-    // If honeypot has content, treat as invalid
+    // ' aops: any value in honeypot => treat as spam
     if (form.website && form.website.trim().length > 0) {
       newErrors.website = "Spam detected";
     }
@@ -64,6 +79,7 @@ export default function ContactPage() {
     return Object.keys(newErrors).length === 0;
   }
 
+  // ' aops: unified onChange for inputs/select/textarea
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) {
@@ -71,42 +87,48 @@ export default function ContactPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
+  // ' aops: submit handler — validates, sends, reports status
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus(null);
     if (!validate()) return;
     setLoading(true);
 
-    // EmailJS expects template params (keys must match your template on EmailJS)
+    // ' aops: keys must match variables you created on EmailJS template
     const templateParams = {
       from_name: form.name,
       from_email: form.email,
-      service_type: form.service, // <- create {{service_type}} variable in your EmailJS template
+      service_type: form.service, // ' aops: {{service_type}} in your email template
       message: form.message,
     };
 
     try {
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, {
-        publicKey: PUBLIC_KEY,
-      });
+      // ' aops: email dispatch
+      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, { publicKey: PUBLIC_KEY });
+
+      // ' aops: optimistic success ui
       setStatus({ ok: true, msg: "Thanks! Your message has been sent." });
+
+      // ' aops: reset state + native form
       setForm({ name: "", email: "", service: "", message: "", website: "" });
-      // Optionally reset the native form
       formRef.current?.reset();
     } catch (error) {
+      // ' aops: surfaced failure
       console.error("EmailJS Error:", error);
       setStatus({
         ok: false,
         msg: "Something went wrong sending your message. Please try again.",
       });
     } finally {
+      // ' aops: always release loading flag
       setLoading(false);
     }
   }
 
+  // ' aops: page layout
   return (
     <main className="min-h-screen max-w-5xl mx-auto px-6 py-20 sm:px-10">
-      {/* Header */}
+      {/* ' aops: hero header */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -119,7 +141,7 @@ export default function ContactPage() {
         </p>
       </motion.div>
 
-      {/* Services */}
+      {/* ' aops: services grid */}
       <section aria-labelledby="services" className="mb-16">
         <h2 id="services" className="text-2xl font-semibold mb-6 text-center">
           Services I Offer
@@ -153,7 +175,7 @@ export default function ContactPage() {
         </motion.div>
       </section>
 
-      {/* Contact */}
+      {/* ' aops: contact form */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -167,12 +189,9 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="space-y-6"
-          noValidate
-        >
+        {/* ' aops: controlled form with validation & live status */}
+        <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
+          {/* ' aops: name + email */}
           <div className="grid sm:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block mb-1 font-semibold">
@@ -218,6 +237,7 @@ export default function ContactPage() {
             </div>
           </div>
 
+          {/* ' aops: service select */}
           <div>
             <label htmlFor="service" className="block mb-1 font-semibold">
               Service
@@ -247,6 +267,7 @@ export default function ContactPage() {
             )}
           </div>
 
+          {/* ' aops: message */}
           <div>
             <label htmlFor="message" className="block mb-1 font-semibold">
               Message
@@ -269,7 +290,7 @@ export default function ContactPage() {
             )}
           </div>
 
-          {/* Honeypot – keep hidden */}
+          {/* ' aops: honeypot (keep hidden) */}
           <div className="hidden" aria-hidden="true">
             <label htmlFor="website">Website</label>
             <input
@@ -280,22 +301,19 @@ export default function ContactPage() {
               tabIndex={-1}
               autoComplete="off"
             />
-            {errors.website && (
-              <p className="text-sm text-red-600 mt-1">{errors.website}</p>
-            )}
+            {errors.website && <p className="text-sm text-red-600 mt-1">{errors.website}</p>}
           </div>
 
+          {/* ' aops: submit button with loading state */}
           <Button type="submit" size="lg" className="w-full" disabled={loading}>
             {loading ? "Sending..." : "Send Message"}
           </Button>
 
-          {/* Live status */}
+          {/* ' aops: live region for a11y feedback */}
           {status && (
             <div
               className={`mt-3 flex items-center gap-2 rounded-md border px-3 py-2 text-sm ${
-                status.ok
-                  ? "border-green-200 text-green-700"
-                  : "border-red-200 text-red-700"
+                status.ok ? "border-green-200 text-green-700" : "border-red-200 text-red-700"
               }`}
               role="status"
               aria-live="polite"
@@ -306,7 +324,7 @@ export default function ContactPage() {
           )}
         </form>
 
-        {/* Socials */}
+        {/* ' aops: social links */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -353,7 +371,7 @@ export default function ContactPage() {
   );
 }
 
-/** --- Small service card component --- */
+/** ' aops: small, reusable service card component */
 function ServiceCard({
   Icon,
   title,
@@ -364,10 +382,7 @@ function ServiceCard({
   desc: string;
 }) {
   return (
-    <motion.article
-      whileHover={{ y: -4 }}
-      className="rounded-2xl border bg-card p-5 shadow-sm"
-    >
+    <motion.article whileHover={{ y: -4 }} className="rounded-2xl border bg-card p-5 shadow-sm">
       <div className="flex items-center gap-3 mb-2">
         <span className="inline-flex h-10 w-10 items-center justify-center rounded-xl border">
           <Icon size={20} />
