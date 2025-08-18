@@ -52,7 +52,7 @@ export default function ProjectsPage() {
                 src={image}
                 alt={`${title} screenshot`}
                 fill
-                className="object-cover"
+                className="object-cover dark:border-4 border-white"
               />
             </div>
 
