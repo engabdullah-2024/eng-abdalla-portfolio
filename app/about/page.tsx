@@ -68,7 +68,7 @@ export default function AboutPage() {
           About Me
         </h1>
         <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          I&apos;m <span className="font-semibold">Eng Abdalla</span>, a senior full-stack
+          I&apos;m <span className="font-semibold">Eng Abdalla</span>, a passionate full-stack
           developer crafting fast, scalable, and delightful web experiences with{" "}
           <strong>Next.js</strong>, <strong>TypeScript</strong>,{" "}
           <strong>Tailwind CSS</strong>, and <strong>MongoDB</strong>.

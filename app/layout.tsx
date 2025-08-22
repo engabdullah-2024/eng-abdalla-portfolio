@@ -19,6 +19,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Eng Abdalla - Full Stack Developer",
   description: "Portfolio of Eng Abdalla, a full stack developer specializing in modern web applications using Next.js, TypeScript, and Tailwind CSS.",
+   icons: {
+    icon: "/favicon.ico",   // 👈 your new logo path
+  },
 };
 
 interface RootLayoutProps {
