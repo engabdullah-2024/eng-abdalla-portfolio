@@ -24,8 +24,24 @@ import {
   SiJavascript,
 } from "react-icons/si";
 
+// Stable, typed variants to avoid mutation lint
+const fadeInUp = {
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.55, ease: "easeOut" },
+} as const;
+
+// Pre-encoded assets in constants (avoids JSX escaping warnings)
+const GRID_DATA_URL =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M32 0H0v32' fill='none' stroke='%23cbd5e1' stroke-width='1'/%3E%3C/svg%3E\")";
+
+const LINEAR_BEAMS =
+  "linear-gradient(115deg, rgba(56,189,248,0.08), transparent 45%), linear-gradient(245deg, rgba(99,102,241,0.08), transparent 40%)";
+
+type Tech = { icon: JSX.Element; name: string };
+
 export default function AboutPage() {
-  const techIcons = [
+  const techIcons: Tech[] = [
     { icon: <FaReact className="text-sky-500" />, name: "React" },
     { icon: <SiNextdotjs className="text-black dark:text-white" />, name: "Next.js" },
     { icon: <SiTypescript className="text-blue-600" />, name: "TypeScript" },
@@ -41,83 +57,123 @@ export default function AboutPage() {
   ];
 
   return (
-    <main className="min-h-screen py-20 px-6 sm:px-10 max-w-6xl mx-auto">
+    <main
+      className="
+        relative isolate min-h-[100svh] px-6 py-20 sm:px-10
+        bg-gradient-to-b from-slate-50 via-white to-slate-100
+        dark:from-slate-950 dark:via-slate-950 dark:to-slate-900
+      "
+    >
+      {/* ===== LAYER 1: Linear gradient beams ===== */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-30 opacity-70 dark:opacity-80"
+        style={{ backgroundImage: LINEAR_BEAMS }}
+      />
+
+      {/* ===== LAYER 2: SVG grid (masked) ===== */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-20 opacity-[0.35] dark:opacity-[0.25]
+                   [mask-image:radial-gradient(ellipse_120%_80%_at_50%_20%,black,transparent)]
+                   [-webkit-mask-image:radial-gradient(ellipse_120%_80%_at_50%_20%,black,transparent)]"
+        style={{
+          backgroundImage: GRID_DATA_URL,
+          backgroundSize: "32px 32px",
+          backgroundPosition: "center",
+        }}
+      />
+
+      {/* ===== LAYER 3: Blurred color orbs ===== */}
+      <div
+        aria-hidden="true"
+        className="absolute -top-24 -left-24 -z-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute -bottom-24 -right-24 -z-10 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
+      />
+
+      {/* ===== BIO SECTION ===== */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-12"
+        initial={fadeInUp.initial}
+        animate={fadeInUp.animate}
+        transition={fadeInUp.transition}
+        className="
+          relative mx-auto mb-14 max-w-5xl rounded-3xl border
+          border-white/20 bg-white/40 p-8 shadow-[0_0_60px_-15px_rgba(99,102,241,0.25)]
+          backdrop-blur-xl dark:border-white/10 dark:bg-white/5
+        "
       >
-        <div className="flex flex-col items-center justify-center mb-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="w-32 h-32 sm:w-40 sm:h-40 relative rounded-full overflow-hidden shadow-md"
-          >
+        <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
+          <div className="relative h-32 w-32 overflow-hidden rounded-full ring-1 ring-black/5 md:h-36 md:w-36">
             <Image
               src="/eng.jpg"
               alt="Eng Abdalla"
               fill
+              sizes="(max-width: 768px) 8rem, 9rem"
               className="object-cover"
+              priority
             />
-          </motion.div>
-        </div>
+          </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-primary">
-          About Me
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-          I&apos;m <span className="font-semibold">Eng Abdalla</span>, a passionate full-stack
-          developer crafting fast, scalable, and delightful web experiences with{" "}
-          <strong>Next.js</strong>, <strong>TypeScript</strong>,{" "}
-          <strong>Tailwind CSS</strong>, and <strong>MongoDB</strong>.
-        </p>
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-primary">
+              About Me
+            </h1>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+              I&apos;m <span className="font-semibold">Eng Abdalla</span>, a full-stack developer
+              focused on clean architecture, strong typing, and beautiful UX. I build fast, scalable
+              apps with <strong>Next.js</strong>, <strong>TypeScript</strong>,{" "}
+              <strong>Tailwind CSS</strong>, <strong>MongoDB</strong>, and the MERN ecosystem.
+            </p>
+
+            <div className="mt-6">
+              <Button asChild size="lg" className="gap-2">
+                <Link href="/abdalla.pdf" target="_blank" rel="noreferrer" prefetch>
+                  <Download className="h-5 w-5" />
+                  Download My Resume
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
+      {/* ===== TECH STACK ===== */}
       <motion.section
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.6 }}
-        className="mb-20"
+        initial={fadeInUp.initial}
+        animate={fadeInUp.animate}
+        transition={{ ...fadeInUp.transition, delay: 0.12 }}
+        className="mx-auto mb-4 max-w-6xl"
       >
-        <h2 className="text-2xl font-semibold mb-6 text-center text-primary">
-          My Tech Stack
-        </h2>
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-8 justify-items-center">
-          {techIcons.map((tech, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center text-center group"
+        <h2 className="mb-6 text-center text-2xl font-semibold text-primary">My Tech Stack</h2>
+
+        <div className="grid grid-cols-3 justify-items-center gap-6 sm:grid-cols-4 md:grid-cols-6">
+          {techIcons.map((tech, i) => (
+            <motion.div
+              key={tech.name}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.35, delay: i * 0.02 }}
+              className="
+                group flex w-full max-w-[120px] flex-col items-center rounded-xl
+                border border-transparent bg-white/40 p-4 text-center shadow-sm
+                ring-1 ring-black/5 backdrop-blur
+                transition-all duration-300 hover:scale-105 hover:border-primary/30 hover:bg-white/60
+                dark:bg-white/5 dark:ring-white/10
+              "
+              aria-label={tech.name}
             >
-              <div className="text-4xl group-hover:scale-110 transition-transform duration-300">
+              <div className="text-4xl transition-transform duration-300 group-hover:scale-110">
                 {tech.icon}
               </div>
-              <span className="mt-2 text-sm text-muted-foreground">
-                {tech.name}
-              </span>
-            </div>
+              <span className="mt-2 text-sm text-muted-foreground">{tech.name}</span>
+            </motion.div>
           ))}
         </div>
       </motion.section>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
-        className="text-center"
-      >
-        <Link href="/abdalla.pdf" target="_blank">
-          <Button
-            size="lg"
-            variant="default"
-            className="text-base font-medium gap-2"
-          >
-            <Download className="h-5 w-5" />
-            Download My Resume
-          </Button>
-        </Link>
-      </motion.div>
     </main>
   );
 }
