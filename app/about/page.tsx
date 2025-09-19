@@ -1,6 +1,7 @@
 // app/about/page.tsx
 "use client";
 
+import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
@@ -24,21 +25,22 @@ import {
   SiJavascript,
 } from "react-icons/si";
 
-// Stable, typed variants to avoid mutation lint
+// Stable, typed variants
 const fadeInUp = {
   initial: { opacity: 0, y: 18 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.55, ease: "easeOut" },
 } as const;
 
-// Pre-encoded assets in constants (avoids JSX escaping warnings)
+// Pre-encoded assets in constants
 const GRID_DATA_URL =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M32 0H0v32' fill='none' stroke='%23cbd5e1' stroke-width='1'/%3E%3C/svg%3E\")";
 
 const LINEAR_BEAMS =
   "linear-gradient(115deg, rgba(56,189,248,0.08), transparent 45%), linear-gradient(245deg, rgba(99,102,241,0.08), transparent 40%)";
 
-type Tech = { icon: JSX.Element; name: string };
+// ✅ Fix: use ReactNode instead of JSX.Element
+type Tech = { icon: ReactNode; name: string };
 
 export default function AboutPage() {
   const techIcons: Tech[] = [
@@ -64,14 +66,13 @@ export default function AboutPage() {
         dark:from-slate-950 dark:via-slate-950 dark:to-slate-900
       "
     >
-      {/* ===== LAYER 1: Linear gradient beams ===== */}
+      {/* LAYER 1: Linear gradient beams */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-30 opacity-70 dark:opacity-80"
         style={{ backgroundImage: LINEAR_BEAMS }}
       />
-
-      {/* ===== LAYER 2: SVG grid (masked) ===== */}
+      {/* LAYER 2: SVG grid (masked) */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-20 opacity-[0.35] dark:opacity-[0.25]
@@ -83,8 +84,7 @@ export default function AboutPage() {
           backgroundPosition: "center",
         }}
       />
-
-      {/* ===== LAYER 3: Blurred color orbs ===== */}
+      {/* LAYER 3: Blurred color orbs */}
       <div
         aria-hidden="true"
         className="absolute -top-24 -left-24 -z-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl"
@@ -94,7 +94,7 @@ export default function AboutPage() {
         className="absolute -bottom-24 -right-24 -z-10 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
       />
 
-      {/* ===== BIO SECTION ===== */}
+      {/* BIO */}
       <motion.div
         initial={fadeInUp.initial}
         animate={fadeInUp.animate}
@@ -116,7 +116,6 @@ export default function AboutPage() {
               priority
             />
           </div>
-
           <div className="flex-1">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-primary">
               About Me
@@ -127,7 +126,6 @@ export default function AboutPage() {
               apps with <strong>Next.js</strong>, <strong>TypeScript</strong>,{" "}
               <strong>Tailwind CSS</strong>, <strong>MongoDB</strong>, and the MERN ecosystem.
             </p>
-
             <div className="mt-6">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/abdalla.pdf" target="_blank" rel="noreferrer" prefetch>
@@ -140,7 +138,7 @@ export default function AboutPage() {
         </div>
       </motion.div>
 
-      {/* ===== TECH STACK ===== */}
+      {/* TECH STACK */}
       <motion.section
         initial={fadeInUp.initial}
         animate={fadeInUp.animate}
@@ -148,7 +146,6 @@ export default function AboutPage() {
         className="mx-auto mb-4 max-w-6xl"
       >
         <h2 className="mb-6 text-center text-2xl font-semibold text-primary">My Tech Stack</h2>
-
         <div className="grid grid-cols-3 justify-items-center gap-6 sm:grid-cols-4 md:grid-cols-6">
           {techIcons.map((tech, i) => (
             <motion.div
