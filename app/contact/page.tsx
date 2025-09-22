@@ -1,9 +1,8 @@
 // app/contact/page.tsx
 "use client";
 
-import type { ChangeEvent, FormEvent, ComponentType } from "react";
-import { useRef, useState } from "react";
-import emailjs from "@emailjs/browser";
+import type { ChangeEvent, ComponentType, FormEvent } from "react";
+import { useRef, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
@@ -43,11 +42,6 @@ const sectionIn = {
   transition: { duration: 0.5, ease: "easeOut" },
 } as const;
 
-// ---- EmailJS (consider using env vars or API route in production) ----
-const SERVICE_ID = "service_oab4tqx";
-const TEMPLATE_ID = "template_yy6fly9";
-const PUBLIC_KEY = "6nbY0x5vkTOwEohEU";
-
 // ---- Form types ----
 type ServiceKind = "Web Design" | "Web Development" | "Graphic Design" | "Web Hosting" | "";
 type FormState = {
@@ -57,6 +51,49 @@ type FormState = {
   message: string;
   website?: string; // honeypot
 };
+
+type ApiOk = { ok: true; message: string };
+type ApiErr = { ok: false; error: string };
+type ApiResponse = ApiOk | ApiErr;
+
+// ---------- Safe helpers ----------
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null;
+}
+
+function isApiOk(v: unknown): v is ApiOk {
+  return isRecord(v) && v.ok === true && typeof v.message === "string";
+}
+
+function isApiErr(v: unknown): v is ApiErr {
+  return isRecord(v) && v.ok === false && typeof v.error === "string";
+}
+
+async function parseResponse(res: Response): Promise<unknown> {
+  const ct = res.headers.get("content-type") || "";
+  if (ct.includes("application/json")) {
+    try {
+      return await res.json();
+    } catch {
+      // fall through to text if json fails
+    }
+  }
+  try {
+    const t = await res.text();
+    return t;
+  } catch {
+    return null;
+  }
+}
+
+function getErrorMessage(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  try {
+    return String(err);
+  } catch {
+    return "Unknown error";
+  }
+}
 
 export default function ContactPage() {
   const [form, setForm] = useState<FormState>({
@@ -73,7 +110,7 @@ export default function ContactPage() {
   const formRef = useRef<HTMLFormElement>(null);
 
   // validation
-  function validate() {
+  const validate = useCallback(() => {
     const newErrors: Record<string, string> = {};
     if (!form.name.trim()) newErrors.name = "Name is required";
     if (!form.email.trim()) newErrors.email = "Email is required";
@@ -85,42 +122,73 @@ export default function ContactPage() {
     if (form.website && form.website.trim().length > 0) newErrors.website = "Spam detected";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }
+  }, [form.email, form.message, form.name, form.service, form.website]);
 
-  function handleChange(
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
-  ) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-  }
+  const handleChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
+    },
+    [],
+  );
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setStatus(null);
-    if (!validate()) return;
-    setLoading(true);
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setStatus(null);
+      if (!validate()) return;
+      setLoading(true);
 
-    const templateParams = {
-      from_name: form.name,
-      from_email: form.email,
-      service_type: form.service,
-      message: form.message,
-    };
+      try {
+        const res = await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            service: form.service,
+            message: form.message,
+            website: form.website, // honeypot
+          }),
+        });
 
-    try {
-      await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, { publicKey: PUBLIC_KEY });
-      setStatus({ ok: true, msg: "Thanks! Your message has been sent." });
-      setForm({ name: "", email: "", service: "", message: "", website: "" });
-      formRef.current?.reset();
-    } catch {
-      setStatus({
-        ok: false,
-        msg: "Something went wrong sending your message. Please try again.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
+        const body = await parseResponse(res);
+
+        // Success path
+        if (res.ok && isApiOk(body)) {
+          setStatus({ ok: true, msg: body.message });
+          setForm({ name: "", email: "", service: "", message: "", website: "" });
+          formRef.current?.reset();
+          return;
+        }
+
+        // Error path (typed API error)
+        if (isApiErr(body)) {
+          throw new Error(body.error);
+        }
+
+        // Error path (non-JSON or unexpected shape)
+        if (typeof body === "string" && body.trim().length > 0) {
+          throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
+        }
+
+        throw new Error(`HTTP ${res.status}`);
+      } catch (err: unknown) {
+        setStatus({
+          ok: false,
+          msg: getErrorMessage(err) || "Something went wrong sending your message. Please try again.",
+        });
+      } finally {
+        setLoading(false);
+      }
+    },
+    [form.email, form.message, form.name, form.service, form.website, validate],
+  );
+
+  // Wrapper to satisfy `no-misused-promises` when passing async to onSubmit
+  const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
+    void handleSubmit(e);
+  }, [handleSubmit]);
 
   return (
     <main
@@ -220,7 +288,7 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" noValidate>
+          <form ref={formRef} onSubmit={onSubmit} className="space-y-6" noValidate>
             {/* name + email */}
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
