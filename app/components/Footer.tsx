@@ -55,7 +55,7 @@ export default function Footer() {
             <Twitter size={24} />
           </Link>
           <Link
-            href="tel:+1234567890"
+            href="tel:+252613169435"
             aria-label="Phone Number"
             className="hover:text-green-600 transition"
           >
