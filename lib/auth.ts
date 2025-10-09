@@ -18,14 +18,18 @@ function getSecret(): string {
 }
 
 /* ======================
-   Type guards for cookies()
+   cookies() normalization
+   (handles both sync and async cookies() across Next versions)
    ====================== */
-type ReadCookieValue = { name: string; value: string } | undefined;
+function isPromise<T>(v: T | Promise<T>): v is Promise<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return typeof (v as any)?.then === "function";
+}
 
-// Minimal shape for a mutable cookies object (route handlers / server actions)
-type MutableCookies = {
-  get(name: string): ReadCookieValue;
-  set(
+// Minimal shape we need from cookies()
+type CookiesShape = {
+  get(name: string): { name: string; value: string } | undefined;
+  set?(
     name: string,
     value: string,
     options?: {
@@ -34,18 +38,18 @@ type MutableCookies = {
       secure?: boolean;
       path?: string;
       maxAge?: number;
-    },
+    }
   ): void;
-  delete(name: string, options?: { path?: string }): void;
 };
 
-// Runtime guard: does this cookies() object support .set()?
-function isMutableCookies(obj: unknown): obj is MutableCookies {
-  return (
-    typeof obj === "object" &&
-    obj !== null &&
-    typeof (obj as { set?: unknown }).set === "function"
-  );
+// Always return a resolved cookies object (sync or async)
+async function getCookies(): Promise<CookiesShape> {
+  const c = nextCookies() as unknown;
+  return isPromise(c) ? await c : (c as CookiesShape);
+}
+
+function isMutable(c: CookiesShape): c is CookiesShape & Required<Pick<CookiesShape, "set">> {
+  return typeof c.set === "function";
 }
 
 /* ======================
@@ -85,19 +89,18 @@ export function verifyToken(token: string): TokenPayload & JwtPayload {
    ====================== */
 
 /** Read the auth token safely from any server context (RSC or Route). */
-export function getTokenFromCookie(): string | null {
-  const c = nextCookies();
-  const v = c.get(TOKEN_NAME)?.value;
-  return v ?? null;
+export async function getTokenFromCookie(): Promise<string | null> {
+  const c = await getCookies();
+  return c.get(TOKEN_NAME)?.value ?? null;
 }
 
 /**
  * Set the auth cookie.
  * Must be called from a **Route Handler** or **Server Action** (mutable cookies context).
  */
-export function setAuthCookie(token: string): void {
-  const c = nextCookies();
-  if (!isMutableCookies(c)) {
+export async function setAuthCookie(token: string): Promise<void> {
+  const c = await getCookies();
+  if (!isMutable(c)) {
     throw new Error("setAuthCookie() can only be used in Route Handlers or Server Actions.");
   }
   c.set(TOKEN_NAME, token, {
@@ -113,12 +116,11 @@ export function setAuthCookie(token: string): void {
  * Clear the auth cookie.
  * Must be called from a **Route Handler** or **Server Action** (mutable cookies context).
  */
-export function clearAuthCookie(): void {
-  const c = nextCookies();
-  if (!isMutableCookies(c)) {
+export async function clearAuthCookie(): Promise<void> {
+  const c = await getCookies();
+  if (!isMutable(c)) {
     throw new Error("clearAuthCookie() can only be used in Route Handlers or Server Actions.");
   }
-  // Using set with maxAge 0 provides consistent deletion semantics across runtimes.
   c.set(TOKEN_NAME, "", {
     httpOnly: true,
     sameSite: "lax",
