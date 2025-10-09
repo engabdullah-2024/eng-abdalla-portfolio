@@ -13,10 +13,11 @@ const UpdateSchema = z.object({
   slug: z.string().min(1).optional(),
 });
 
-type RouteCtx = { params: { slug: string } };
-
 // GET /api/posts/[slug]
-export async function GET(_req: Request, { params }: RouteCtx) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
     const post = await prisma.post.findUnique({ where: { slug: params.slug } });
     if (!post) {
@@ -29,23 +30,23 @@ export async function GET(_req: Request, { params }: RouteCtx) {
 }
 
 // PUT /api/posts/[slug] (admin only)
-export async function PUT(req: Request, { params }: RouteCtx) {
+export async function PUT(
+  req: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
-    // Auth
     const store = await cookies();
     const admin = await requireAdmin(store);
     if (!admin) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    // Validate body
     const body = await req.json();
     const parsed = UpdateSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ ok: false, error: "Invalid input" }, { status: 400 });
     }
 
-    // Update
     const post = await prisma.post.update({
       where: { slug: params.slug },
       data: parsed.data,
@@ -54,27 +55,30 @@ export async function PUT(req: Request, { params }: RouteCtx) {
     return NextResponse.json({ ok: true, post });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unexpected error";
-    const code = msg === "Record to update not found." ? 404 : 500;
+    const code =
+      msg === "Record to update not found." || /not found/i.test(msg) ? 404 : 500;
     return NextResponse.json({ ok: false, error: msg }, { status: code });
   }
 }
 
 // DELETE /api/posts/[slug] (admin only)
-export async function DELETE(_req: Request, { params }: RouteCtx) {
+export async function DELETE(
+  _req: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
-    // Auth
     const store = await cookies();
     const admin = await requireAdmin(store);
     if (!admin) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    // Delete
     await prisma.post.delete({ where: { slug: params.slug } });
     return NextResponse.json({ ok: true, message: "Deleted" });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unexpected error";
-    const code = msg === "Record to delete does not exist." ? 404 : 500;
+    const code =
+      msg === "Record to delete does not exist." || /not exist/i.test(msg) ? 404 : 500;
     return NextResponse.json({ ok: false, error: msg }, { status: code });
   }
 }
