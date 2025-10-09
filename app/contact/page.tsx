@@ -54,7 +54,7 @@ type FormState = {
 
 type ApiOk = { ok: true; message: string };
 type ApiErr = { ok: false; error: string };
-type ApiResponse = ApiOk | ApiErr;
+// 🔥 Removed: type ApiResponse = ApiOk | ApiErr;
 
 // ---------- Safe helpers ----------
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -154,7 +154,6 @@ export default function ContactPage() {
 
         const body = await parseResponse(res);
 
-        // Success path
         if (res.ok && isApiOk(body)) {
           setStatus({ ok: true, msg: body.message });
           setForm({ name: "", email: "", service: "", message: "", website: "" });
@@ -162,12 +161,10 @@ export default function ContactPage() {
           return;
         }
 
-        // Error path (typed API error)
         if (isApiErr(body)) {
           throw new Error(body.error);
         }
 
-        // Error path (non-JSON or unexpected shape)
         if (typeof body === "string" && body.trim().length > 0) {
           throw new Error(`HTTP ${res.status}: ${body.slice(0, 200)}`);
         }
@@ -185,7 +182,7 @@ export default function ContactPage() {
     [form.email, form.message, form.name, form.service, form.website, validate],
   );
 
-  // Wrapper to satisfy `no-misused-promises` when passing async to onSubmit
+  // Wrapper to satisfy `no-misused-promises`
   const onSubmit = useCallback((e: FormEvent<HTMLFormElement>) => {
     void handleSubmit(e);
   }, [handleSubmit]);
@@ -200,12 +197,12 @@ export default function ContactPage() {
     >
       {/* Background layers */}
       <div
-        aria-hidden="true"
+        aria-hidden
         className="pointer-events-none absolute inset-0 -z-30 opacity-70 dark:opacity-80"
         style={{ backgroundImage: LINEAR_BEAMS }}
       />
       <div
-        aria-hidden="true"
+        aria-hidden
         className="pointer-events-none absolute inset-0 -z-20 opacity-[0.35] dark:opacity-[0.25]
                    [mask-image:radial-gradient(ellipse_120%_80%_at_50%_20%,black,transparent)]
                    [-webkit-mask-image:radial-gradient(ellipse_120%_80%_at_50%_20%,black,transparent)]"
@@ -216,11 +213,11 @@ export default function ContactPage() {
         }}
       />
       <div
-        aria-hidden="true"
+        aria-hidden
         className="absolute -top-24 -left-24 -z-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl"
       />
       <div
-        aria-hidden="true"
+        aria-hidden
         className="absolute -bottom-24 -right-24 -z-10 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
       />
 
@@ -389,7 +386,7 @@ export default function ContactPage() {
             </div>
 
             {/* honeypot */}
-            <div className="hidden" aria-hidden="true">
+            <div className="hidden" aria-hidden>
               <label htmlFor="website">Website</label>
               <input
                 id="website"

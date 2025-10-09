@@ -8,20 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
 import { MotionDiv } from "./_components/motion-div";
-import ShareRail from "./_components/ShareRail"; // <-- use the client component
+import ShareRail from "./_components/ShareRail";
 
 export const runtime = "nodejs";
 export const revalidate = 0;
 
-type Post = {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string | null;
-  author: string;
-  slug: string;
-  publishedAt: Date;
-};
+// ❌ Removed the unused `type Post`
 
 function formatDate(d: Date | string) {
   try {
@@ -191,7 +183,7 @@ export default async function PostPage({ params }: { params: { slug: string } })
           </nav>
         </MotionDiv>
 
-        {/* Share rail — now a Client Component */}
+        {/* Share rail — client component */}
         <aside className="mt-8 lg:mt-0">
           <div className="sticky top-24 space-y-4">
             <ShareRail url={shareUrl} title={post.title} />
