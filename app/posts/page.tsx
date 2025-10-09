@@ -7,9 +7,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
-export const runtime = 'nodejs';
-export const revalidate = 0;
-
 type Post = {
   id: string;
   title: string;
@@ -130,7 +127,7 @@ export default function PostsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25, ease: 'easeOut', delay: Math.min(idx * 0.03, 0.18) }}
               className="group flex h-full flex-col overflow-hidden rounded-2xl border bg-card shadow-sm ring-1 ring-transparent transition hover:shadow-md hover:ring-muted-foreground/10"
-              style={{ minHeight: 420 }} // ensures consistent overall card height
+              style={{ minHeight: 420 }}
             >
               {/* Image */}
               <div className="relative aspect-[16/9] w-full">
@@ -150,7 +147,6 @@ export default function PostsPage() {
 
               {/* Body */}
               <div className="flex flex-1 flex-col p-5">
-                {/* Meta */}
                 <div className="mb-2 flex items-center gap-2 text-xs text-muted-foreground">
                   <span className="truncate">{p.author}</span>
                   <span aria-hidden>·</span>
@@ -159,19 +155,16 @@ export default function PostsPage() {
                   </time>
                 </div>
 
-                {/* Title (2 lines) */}
                 <h3 className="line-clamp-2 text-base font-semibold leading-snug tracking-tight">
                   <Link href={`/posts/${p.slug}`} className="hover:underline">
                     {p.title}
                   </Link>
                 </h3>
 
-                {/* Description (2 lines) */}
                 <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
                   {p.description}
                 </p>
 
-                {/* CTA pinned to bottom */}
                 <div className="mt-auto pt-4">
                   <Link
                     href={`/posts/${p.slug}`}
