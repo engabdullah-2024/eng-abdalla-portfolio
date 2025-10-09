@@ -1,3 +1,4 @@
+// app/posts/[slug]/page.tsx
 import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +14,24 @@ import ShareRail from "./_components/ShareRail";
 export const runtime = "nodejs";
 export const revalidate = 0;
 
-// ❌ Removed the unused `type Post`
+/* ---------- Param normalization that works with both shapes ---------- */
+type SlugParams = { slug: string };
+type CtxEither =
+  | { params: SlugParams }
+  | { params: Promise<SlugParams> };
+
+function isPromise<T>(v: T | Promise<T>): v is Promise<T> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return typeof (v as any)?.then === "function";
+}
+
+async function resolveParams(ctx: unknown): Promise<SlugParams> {
+  const c = ctx as Partial<CtxEither> | undefined;
+  if (!c || !("params" in c)) throw new Error("Missing params");
+  const p = (c as CtxEither).params;
+  return isPromise(p) ? await p : p;
+}
+/* -------------------------------------------------------------------- */
 
 function formatDate(d: Date | string) {
   try {
@@ -32,9 +50,11 @@ function readingTime(text: string) {
   return Math.max(1, Math.round(words / 200));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata(ctx: unknown) {
+  const { slug } = await resolveParams(ctx);
+
   const post = await prisma.post.findUnique({
-    where: { slug: params.slug },
+    where: { slug },
     select: { title: true, description: true, imageUrl: true },
   });
 
@@ -46,13 +66,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title,
     description,
-    alternates: { canonical: `/posts/${params.slug}` },
+    alternates: { canonical: `/posts/${slug}` },
     openGraph: {
       title,
       description,
       images: post.imageUrl ? [{ url: post.imageUrl }] : [],
     },
-    twitter: {
+  twitter: {
       card: "summary_large_image",
       title,
       description,
@@ -61,8 +81,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function PostPage({ params }: { params: { slug: string } }) {
-  const post = await prisma.post.findUnique({ where: { slug: params.slug } });
+export default async function PostPage(ctx: unknown) {
+  const { slug } = await resolveParams(ctx);
+
+  const post = await prisma.post.findUnique({ where: { slug } });
   if (!post) notFound();
 
   const [prevPost, nextPost] = await Promise.all([
