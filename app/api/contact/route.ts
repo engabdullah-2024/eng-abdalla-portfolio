@@ -26,7 +26,6 @@ const MAX_HITS = 4;
 type HitRec = { t: number; n: number };
 
 declare global {
-  // eslint-disable-next-line no-var
   var __contact_hits__: Map<string, HitRec> | undefined;
 }
 
@@ -105,7 +104,7 @@ function makeEmailHtml({
     <style>
       .preheader { display:none!important; visibility:hidden; opacity:0; color:transparent; height:0; width:0; overflow:hidden; mso-hide:all; }
       @media (prefers-color-scheme: dark) {
-        :root { color-scheme: light only; } /* avoid client dark overrides */
+        :root { color-scheme: light only; }
       }
     </style>
   </head>
@@ -280,7 +279,6 @@ export async function POST(req: NextRequest) {
       text,
     };
     if (isValidEmailAddress(email)) {
-      // Resend accepts string | string[]; using array is safe across versions.
       (payload as { reply_to?: string[] }).reply_to = [email];
     }
 
@@ -288,7 +286,6 @@ export async function POST(req: NextRequest) {
 
     if (error) {
       if (process.env.NODE_ENV !== "production") {
-        // eslint-disable-next-line no-console
         console.error("Resend error:", error);
       }
       return NextResponse.json(
@@ -300,7 +297,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, message: "Sent!" });
   } catch (err) {
     if (process.env.NODE_ENV !== "production") {
-      // eslint-disable-next-line no-console
       console.error("Contact route error:", err);
     }
     return NextResponse.json({ ok: false, error: "Unexpected server error." }, { status: 500 });
