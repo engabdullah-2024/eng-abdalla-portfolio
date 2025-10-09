@@ -1,3 +1,4 @@
+// ./app/admin/page.tsx
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -30,7 +31,11 @@ type FormState = {
 
 function getErrorMessage(err: unknown): string {
   if (err instanceof Error) return err.message;
-  try { return String(err); } catch { return "Unknown error"; }
+  try {
+    return String(err);
+  } catch {
+    return "Unknown error";
+  }
 }
 
 export default function AdminDashboard() {
@@ -44,7 +49,11 @@ export default function AdminDashboard() {
 
   // create
   const [createForm, setCreateForm] = useState<FormState>({
-    title: "", description: "", imageUrl: "", author: "", slug: "",
+    title: "",
+    description: "",
+    imageUrl: "",
+    author: "",
+    slug: "",
   });
   const [creating, setCreating] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -52,7 +61,7 @@ export default function AdminDashboard() {
   // edit dialog
   const [editOpen, setEditOpen] = useState(false);
   const [editSlug, setEditSlug] = useState<string | null>(null);
-  const editingPost = useMemo(() => posts.find(p => p.slug === editSlug) ?? null, [posts, editSlug]);
+  const editingPost = useMemo(() => posts.find((p) => p.slug === editSlug) ?? null, [posts, editSlug]);
   const [editForm, setEditForm] = useState<Partial<FormState>>({});
 
   const fetchMe = useCallback(async () => {
@@ -61,10 +70,10 @@ export default function AdminDashboard() {
       const res = await fetch("/api/auth/me", { cache: "no-store" });
       const data = await res.json();
       if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      const m = data.admin as { name: string; email: string; role: "admin" };
+      const m = data.admin as Me;
       setMe(m);
       // default author to admin name
-      setCreateForm(f => ({ ...f, author: m.name }));
+      setCreateForm((f) => ({ ...f, author: m.name }));
     } catch (err) {
       setMeError(getErrorMessage(err));
     }
@@ -97,85 +106,100 @@ export default function AdminDashboard() {
   }, [meError, router]);
 
   // ---- handlers
-  const onCreateChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setCreateForm(prev => ({ ...prev, [name]: value }));
+  const onCreateChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setCreateForm((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const onCreate = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setCreating(true);
+      setStatus(null);
+      try {
+        const res = await fetch("/api/posts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }, // auth cookie checked server-side
+          body: JSON.stringify(createForm),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+        setStatus("✅ Post created");
+        setCreateForm((f) => ({ ...f, title: "", description: "", imageUrl: "", slug: "" }));
+        // refresh list
+        await fetchPosts();
+      } catch (err) {
+        setStatus(`❌ ${getErrorMessage(err)}`);
+      } finally {
+        setCreating(false);
+      }
     },
-    [],
+    [createForm, fetchPosts],
   );
 
-  const onCreate = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setCreating(true);
-    setStatus(null);
-    try {
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }, // auth cookie checked server-side
-        body: JSON.stringify(createForm),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setStatus("✅ Post created");
-      setCreateForm(f => ({ ...f, title: "", description: "", imageUrl: "", slug: "" }));
-      // refresh list
-      await fetchPosts();
-    } catch (err) {
-      setStatus(`❌ ${getErrorMessage(err)}`);
-    } finally {
-      setCreating(false);
-    }
-  }, [createForm, fetchPosts]);
-
-  const openEdit = useCallback((slug: string) => {
-    setEditSlug(slug);
-    const p = posts.find(x => x.slug === slug);
-    setEditForm(p ? {
-      title: p.title, description: p.description, imageUrl: p.imageUrl, author: p.author, slug: p.slug,
-    } : {});
-    setEditOpen(true);
-  }, [posts]);
-
-  const onEditChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setEditForm(prev => ({ ...prev, [name]: value }));
-    }, [],
+  const openEdit = useCallback(
+    (slug: string) => {
+      setEditSlug(slug);
+      const p = posts.find((x) => x.slug === slug);
+      setEditForm(
+        p
+          ? {
+              title: p.title,
+              description: p.description,
+              imageUrl: p.imageUrl,
+              author: p.author,
+              slug: p.slug,
+            }
+          : {},
+      );
+      setEditOpen(true);
+    },
+    [posts],
   );
 
-  const onSaveEdit = useCallback(async () => {
-    if (!editSlug) return;
-    try {
-      const res = await fetch(`/api/posts/${encodeURIComponent(editSlug)}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editForm),
-      });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setEditOpen(false);
-      setStatus("✅ Post updated");
-      await fetchPosts();
-    } catch (err) {
-      setStatus(`❌ ${getErrorMessage(err)}`);
-    }
-  }, [editForm, editSlug, fetchPosts]);
+  const onEditChange = useCallback((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
-  const onDelete = useCallback(async (slug: string) => {
-    if (!confirm("Delete this post?")) return;
-    try {
-      const res = await fetch(`/api/posts/${encodeURIComponent(slug)}`, { method: "DELETE" });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
-      setStatus("✅ Post deleted");
-      await fetchPosts();
-    } catch (err) {
-      setStatus(`❌ ${getErrorMessage(err)}`);
-    }
-  }, [fetchPosts]);
+  const onSaveEdit = useCallback(
+    async () => {
+      if (!editSlug) return;
+      try {
+        const res = await fetch(`/api/posts/${encodeURIComponent(editSlug)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editForm),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+        setEditOpen(false);
+        setStatus("✅ Post updated");
+        await fetchPosts();
+      } catch (err) {
+        setStatus(`❌ ${getErrorMessage(err)}`);
+      }
+    },
+    [editForm, editSlug, fetchPosts],
+  );
 
-  // ✅ Logout -> redirect to login
+  const onDelete = useCallback(
+    async (slug: string) => {
+      if (!confirm("Delete this post?")) return;
+      try {
+        const res = await fetch(`/api/posts/${encodeURIComponent(slug)}`, { method: "DELETE" });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data?.error || `HTTP ${res.status}`);
+        setStatus("✅ Post deleted");
+        await fetchPosts();
+      } catch (err) {
+        setStatus(`❌ ${getErrorMessage(err)}`);
+      }
+    },
+    [fetchPosts],
+  );
+
+  // ✅ Logout -> redirect to login (no console, no eslint-disable)
   const [loggingOut, setLoggingOut] = useState(false);
   const onLogout = useCallback(async () => {
     try {
@@ -184,9 +208,7 @@ export default function AdminDashboard() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       router.push("/admin/login");
     } catch (err) {
-      // optional: show a toast/error state
-      // eslint-disable-next-line no-console
-      console.error("Logout failed:", err);
+      setStatus(`❌ Logout failed: ${getErrorMessage(err)}`);
       router.push("/admin/login"); // force navigation anyway
     } finally {
       setLoggingOut(false);
@@ -206,7 +228,10 @@ export default function AdminDashboard() {
             </p>
           ) : meError ? (
             <p className="mt-1 text-sm text-red-600">
-              Not logged in. <a className="underline" href="/admin/login">Go to Login</a>
+              Not logged in.{" "}
+              <a className="underline" href="/admin/login">
+                Go to Login
+              </a>
             </p>
           ) : (
             <p className="mt-1 text-sm text-muted-foreground">Loading profile…</p>
@@ -230,17 +255,35 @@ export default function AdminDashboard() {
 
           <div className="md:col-span-1">
             <label className="mb-1 block text-sm font-medium">Slug</label>
-            <Input name="slug" value={createForm.slug} onChange={onCreateChange} placeholder="my-first-post" required />
+            <Input
+              name="slug"
+              value={createForm.slug}
+              onChange={onCreateChange}
+              placeholder="my-first-post"
+              required
+            />
           </div>
 
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm font-medium">Image URL</label>
-            <Input name="imageUrl" value={createForm.imageUrl} onChange={onCreateChange} placeholder="https://…" required />
+            <Input
+              name="imageUrl"
+              value={createForm.imageUrl}
+              onChange={onCreateChange}
+              placeholder="https://…"
+              required
+            />
           </div>
 
           <div className="md:col-span-2">
             <label className="mb-1 block text-sm font-medium">Description</label>
-            <Textarea name="description" value={createForm.description} onChange={onCreateChange} rows={5} required />
+            <Textarea
+              name="description"
+              value={createForm.description}
+              onChange={onCreateChange}
+              rows={5}
+              required
+            />
           </div>
 
           <div className="md:col-span-1">
@@ -264,11 +307,13 @@ export default function AdminDashboard() {
       {/* Posts list */}
       <div className="mb-3 flex items-center justify-between">
         <h2 className="text-xl font-semibold">All posts</h2>
-        <span className="text-sm text-muted-foreground">{loadingList ? "Loading…" : `${posts.length} item(s)`}</span>
+        <span className="text-sm text-muted-foreground">
+          {loadingList ? "Loading…" : `${posts.length} item(s)`}
+        </span>
       </div>
 
       <div className="grid gap-5 md:grid-cols-2">
-        {posts.map(p => (
+        {posts.map((p) => (
           <Card key={p.id} className="p-5">
             <div className="flex items-start gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -291,8 +336,12 @@ export default function AdminDashboard() {
                 <p className="mt-3 line-clamp-3 text-sm leading-7">{p.description}</p>
 
                 <div className="mt-4 flex gap-2">
-                  <Button variant="secondary" onClick={() => openEdit(p.slug)}>Edit</Button>
-                  <Button variant="destructive" onClick={() => void onDelete(p.slug)}>Delete</Button>
+                  <Button variant="secondary" onClick={() => openEdit(p.slug)}>
+                    Edit
+                  </Button>
+                  <Button variant="destructive" onClick={() => void onDelete(p.slug)}>
+                    Delete
+                  </Button>
                 </div>
               </div>
             </div>
@@ -307,7 +356,7 @@ export default function AdminDashboard() {
             <DialogTitle>Edit post</DialogTitle>
           </DialogHeader>
 
-          {editingPost ? (
+        {editingPost ? (
             <div className="space-y-4">
               <div>
                 <label className="mb-1 block text-sm font-medium">Title</label>
@@ -327,7 +376,12 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <label className="mb-1 block text-sm font-medium">Description</label>
-                <Textarea name="description" defaultValue={editingPost.description} onChange={onEditChange} rows={5} />
+                <Textarea
+                  name="description"
+                  defaultValue={editingPost.description}
+                  onChange={onEditChange}
+                  rows={5}
+                />
               </div>
             </div>
           ) : (
@@ -335,7 +389,9 @@ export default function AdminDashboard() {
           )}
 
           <DialogFooter className="mt-4">
-            <Button variant="outline" onClick={() => setEditOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setEditOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={() => void onSaveEdit()}>Save changes</Button>
           </DialogFooter>
         </DialogContent>
