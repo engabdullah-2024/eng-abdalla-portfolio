@@ -92,7 +92,9 @@ export async function POST(req: Request) {
 
     const parsed = contactSchema.safeParse(bodyUnknown);
     if (!parsed.success) {
-      const msg = parsed.error.errors.map((e) => e.message).join(", ") || "Invalid input";
+      // 🔧 FIX: Zod uses `issues`, not `errors`
+      const msg =
+        parsed.error.issues.map((i) => i.message).join(", ") || "Invalid input";
       return NextResponse.json({ ok: false, error: msg }, { status: 400 });
     }
     const data: ContactInput = parsed.data;
@@ -119,8 +121,7 @@ export async function POST(req: Request) {
     const { error } = await resend.emails.send({
       to,
       from,
-      // ✅ FIX HERE
-      replyTo: data.email,
+      replyTo: data.email, // ✅ correct key for Resend
       subject: `New Contact: ${data.service} — ${data.name}`,
       text: buildPlainText(data, ip, ua),
       html: buildHtml(data, ip, ua),
