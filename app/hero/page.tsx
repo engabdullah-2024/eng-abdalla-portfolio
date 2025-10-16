@@ -242,9 +242,9 @@ export default function HeroPage() {
             variant="ghost"
             className="hover:bg-primary/10 hover:text-primary"
           >
-            <a href="/resume.pdf" target="_blank" rel="noreferrer" aria-label="Download resume">
+            <a href="/abdalla.pdf" target="_blank" rel="noreferrer" aria-label="Download resume">
               <Download className="mr-2 h-5 w-5" />
-              Résumé
+              Resume
             </a>
           </Button>
         </motion.div>
