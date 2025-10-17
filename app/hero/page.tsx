@@ -125,6 +125,25 @@ export default function HeroPage() {
   const gridDataUrl =
     "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M32 0H0v32' fill='none' stroke='%23cbd5e1' stroke-width='1'/%3E%3C/svg%3E\")";
 
+  // QR / barcode target
+  const qrHref = "https://eng-abdalla-portfolio.vercel.app/";
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=${encodeURIComponent(
+    qrHref,
+  )}&format=png`;
+
+  const [copied, setCopied] = useState(false);
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(qrHref);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch (err) {
+      // ignore copy failure (fall back to selecting link)
+      // no-op: intentionally silent to avoid console noise in prod
+    }
+  }
+
   return (
     <main
       className="
@@ -267,6 +286,52 @@ export default function HeroPage() {
             Press <kbd className="rounded border px-1">G</kbd> then{" "}
             <kbd className="rounded border px-1">P</kbd> to open projects
           </span>
+        </motion.div>
+
+        {/* NEW: QR / Barcode block (non-invasive, no dependency, keeps existing layout) */}
+        <motion.div
+          className="mt-12 flex flex-col items-center justify-center gap-3"
+          {...fadeInUp}
+          transition={{ ...fadeInUp.transition, delay: 1.2 }}
+        >
+          <p className="text-sm text-muted-foreground">Scan this QR to visit my portfolio</p>
+
+          {/* Link wraps the image so tapping the QR also opens the target in-app */}
+          <a
+            href={qrHref}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open Eng Abdalla portfolio"
+            className="rounded-lg p-1 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+          >
+            <img
+              src={qrSrc}
+              alt="QR code linking to Eng Abdalla portfolio"
+              width={260}
+              height={260}
+              className="block h-[260px] w-[260px] rounded-md bg-white/80 p-1 shadow"
+              loading="lazy"
+            />
+          </a>
+
+          <div className="flex items-center gap-2">
+            <a href={qrHref} target="_blank" rel="noreferrer" className="text-sm underline">
+              {qrHref}
+            </a>
+
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="ml-2 rounded-md border px-2 py-1 text-xs"
+              aria-label="Copy portfolio link"
+            >
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+
+          <p className="text-xs text-muted-foreground">
+            Tip: most phone cameras can scan this QR. If not, long-press and open.
+          </p>
         </motion.div>
       </section>
     </main>
