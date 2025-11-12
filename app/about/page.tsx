@@ -2,11 +2,11 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
+import Image from "next/image";
+import Link from "next/link";
+import { motion, type MotionProps } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
 
 import {
   FaReact,
@@ -25,152 +25,176 @@ import {
   SiJavascript,
 } from "react-icons/si";
 
-// Stable, typed variants
-const fadeInUp = {
+type Tech = { icon: ReactNode; name: string };
+
+// Typed, reusable motion preset
+const fadeUp = (delay = 0): MotionProps => ({
   initial: { opacity: 0, y: 18 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.55, ease: "easeOut" },
-} as const;
-
-// Pre-encoded assets in constants
-const GRID_DATA_URL =
-  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M32 0H0v32' fill='none' stroke='%23cbd5e1' stroke-width='1'/%3E%3C/svg%3E\")";
-
-const LINEAR_BEAMS =
-  "linear-gradient(115deg, rgba(56,189,248,0.08), transparent 45%), linear-gradient(245deg, rgba(99,102,241,0.08), transparent 40%)";
-
-// ✅ Fix: use ReactNode instead of JSX.Element
-type Tech = { icon: ReactNode; name: string };
+  transition: { duration: 0.55, ease: "easeOut", delay },
+});
 
 export default function AboutPage() {
   const techIcons: Tech[] = [
     { icon: <FaReact className="text-sky-500" />, name: "React" },
-    { icon: <SiNextdotjs className="text-black dark:text-white" />, name: "Next.js" },
+    { icon: <SiNextdotjs className="text-neutral-900 dark:text-white" />, name: "Next.js" },
     { icon: <SiTypescript className="text-blue-600" />, name: "TypeScript" },
-    { icon: <SiJavascript className="text-yellow-400" />, name: "JavaScript" },
+    { icon: <SiJavascript className="text-yellow-500" />, name: "JavaScript" },
     { icon: <SiTailwindcss className="text-cyan-500" />, name: "Tailwind CSS" },
     { icon: <FaNodeJs className="text-green-600" />, name: "Node.js" },
-    { icon: <SiExpress className="text-gray-700 dark:text-gray-300" />, name: "Express.js" },
-    { icon: <SiMongodb className="text-green-500" />, name: "MongoDB" },
-    { icon: <FaGithub className="text-black dark:text-white" />, name: "GitHub" },
+    { icon: <SiExpress className="text-neutral-700 dark:text-neutral-300" />, name: "Express.js" },
+    { icon: <SiMongodb className="text-emerald-500" />, name: "MongoDB" },
+    { icon: <FaGithub className="text-neutral-900 dark:text-white" />, name: "GitHub" },
     { icon: <FaGitAlt className="text-red-500" />, name: "Git" },
     { icon: <FaHtml5 className="text-orange-600" />, name: "HTML5" },
     { icon: <FaCss3Alt className="text-blue-600" />, name: "CSS3" },
   ];
 
   return (
-    <main
-      className="
-        relative isolate min-h-[100svh] px-6 py-20 sm:px-10
-        bg-gradient-to-b from-slate-50 via-white to-slate-100
-        dark:from-slate-950 dark:via-slate-950 dark:to-slate-900
-      "
-    >
-      {/* LAYER 1: Linear gradient beams */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-30 opacity-70 dark:opacity-80"
-        style={{ backgroundImage: LINEAR_BEAMS }}
-      />
-      {/* LAYER 2: SVG grid (masked) */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-20 opacity-[0.35] dark:opacity-[0.25]
-                   [mask-image:radial-gradient(ellipse_120%_80%_at_50%_20%,black,transparent)]
-                   [-webkit-mask-image:radial-gradient(ellipse_120%_80%_at_50%_20%,black,transparent)]"
-        style={{
-          backgroundImage: GRID_DATA_URL,
-          backgroundSize: "32px 32px",
-          backgroundPosition: "center",
-        }}
-      />
-      {/* LAYER 3: Blurred color orbs */}
-      <div
-        aria-hidden="true"
-        className="absolute -top-24 -left-24 -z-10 h-72 w-72 rounded-full bg-cyan-400/20 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -bottom-24 -right-24 -z-10 h-72 w-72 rounded-full bg-indigo-500/20 blur-3xl"
-      />
-
-      {/* BIO */}
-      <motion.div
-        initial={fadeInUp.initial}
-        animate={fadeInUp.animate}
-        transition={fadeInUp.transition}
+    <main className="relative px-4 sm:px-6 lg:px-8 py-10 md:py-14">
+      {/* HERO-STYLE CARD */}
+      <section
         className="
-          relative mx-auto mb-14 max-w-5xl rounded-3xl border
-          border-white/20 bg-white/40 p-8 shadow-[0_0_60px_-15px_rgba(99,102,241,0.25)]
-          backdrop-blur-xl dark:border-white/10 dark:bg-white/5
+          mx-auto max-w-[1200px]
+          rounded-[28px] overflow-hidden
+          bg-white/80 backdrop-blur border border-neutral-200 shadow-[0_25px_80px_rgba(0,0,0,0.06)]
+          dark:bg-white/5 dark:border-white/10 dark:shadow-[0_25px_80px_rgba(0,0,0,.55)]
         "
       >
-        <div className="flex flex-col items-center gap-6 text-center md:flex-row md:text-left">
-          <div className="relative h-32 w-32 overflow-hidden rounded-full ring-1 ring-black/5 md:h-36 md:w-36">
-            <Image
-              src="/eng.jpg"
-              alt="Eng Abdalla"
-              fill
-              sizes="(max-width: 768px) 8rem, 9rem"
-              className="object-cover"
-              priority
-            />
-          </div>
-          <div className="flex-1">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-primary">
+        <div
+          className="
+            grid items-center
+            gap-10 md:gap-12
+            p-6 sm:p-8 md:p-10
+            md:grid-cols-[minmax(0,1fr)_minmax(420px,520px)]
+          "
+        >
+          {/* LEFT: Bio text */}
+          <motion.div {...fadeUp(0.05)} className="space-y-6">
+            <motion.span
+              {...fadeUp(0.1)}
+              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-neutral-700 dark:text-white/80"
+            >
+              <span className="inline-block h-2 w-2 rounded-full bg-brand" />
+              Eng Abdalla
+            </motion.span>
+
+            <motion.h1
+              {...fadeUp(0.18)}
+              className="font-display font-extrabold leading-[1.05] text-[clamp(2rem,4.2vw,3.2rem)] text-neutral-950 dark:text-white"
+            >
               About Me
-            </h1>
-            <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              I&apos;m <span className="font-semibold">Eng Abdalla</span>, a full-stack developer
-              focused on clean architecture, strong typing, and beautiful UX. I build fast, scalable
-              apps with <strong>Next.js</strong>, <strong>TypeScript</strong>,{" "}
-              <strong>Tailwind CSS</strong>, <strong>MongoDB</strong>, and the MERN ecosystem.
-            </p>
-            <div className="mt-6">
-              <Button asChild size="lg" className="gap-2">
-                <Link href="/abdalla.pdf" target="_blank" rel="noreferrer" prefetch>
-                  <Download className="h-5 w-5" />
-                  Download My Resume
+            </motion.h1>
+
+            <motion.p
+              {...fadeUp(0.26)}
+              className="max-w-[60ch] text-base md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/70"
+            >
+              I&apos;m <strong>Eng Abdalla</strong>, a product-minded full-stack developer focused
+              on performance, accessibility, and elegant UI. I love building modern web experiences
+              with <strong>Next.js</strong>, <strong>TypeScript</strong>, <strong>Tailwind</strong>,
+              and <strong>MongoDB</strong> — turning complex ideas into delightful, reliable products.
+            </motion.p>
+
+            <motion.div {...fadeUp(0.34)} className="flex flex-wrap items-center gap-3 pt-1">
+              <Button
+                asChild
+                size="lg"
+                className="bg-brand hover:bg-brand/90 text-black font-semibold rounded-xl px-6 dark:text-white"
+              >
+                <Link href="/projects">View Projects</Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-neutral-300 text-neutral-900 hover:bg-neutral-50 dark:border-white/20 dark:text-white dark:hover:bg-white/10 rounded-xl"
+              >
+                <Link href="/abdalla.pdf" target="_blank" rel="noreferrer">
+                  <Download className="mr-2 h-5 w-5" />
+                  Download Resume
                 </Link>
               </Button>
-            </div>
-          </div>
-        </div>
-      </motion.div>
+            </motion.div>
+          </motion.div>
 
-      {/* TECH STACK */}
-      <motion.section
-        initial={fadeInUp.initial}
-        animate={fadeInUp.animate}
-        transition={{ ...fadeInUp.transition, delay: 0.12 }}
-        className="mx-auto mb-4 max-w-6xl"
-      >
-        <h2 className="mb-6 text-center text-2xl font-semibold text-primary">My Tech Stack</h2>
-        <div className="grid grid-cols-3 justify-items-center gap-6 sm:grid-cols-4 md:grid-cols-6">
+          {/* RIGHT: Portrait + subtle glow */}
+          <motion.div
+            {...fadeUp(0.18)}
+            className="relative mx-auto md:mx-0 w-full max-w-[420px] md:max-w-none"
+          >
+            <motion.div
+              animate={{ scale: [1, 1.05, 1], opacity: [0.45, 0.8, 0.45] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -inset-8 -z-10 rounded-[36px]"
+              style={{
+                background:
+                  "radial-gradient(closest-side, rgba(255,59,48,.28), transparent 70%)",
+              }}
+            />
+            <div
+              className="
+                rounded-[26px] overflow-hidden
+                bg-neutral-50 border border-neutral-200 shadow-[0_20px_60px_rgba(0,0,0,.08)]
+                dark:bg-white/5 dark:border-white/10 dark:shadow-[0_25px_80px_rgba(0,0,0,.55)]
+              "
+            >
+              <Image
+                src="/eng.jpg"
+                alt="Eng Abdalla"
+                width={640}
+                height={820}
+                priority
+                className="h-auto w-full object-cover md:aspect-[4/5]"
+                sizes="(min-width: 1024px) 520px, (min-width: 768px) 420px, 90vw"
+              />
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* TECH STACK GRID (hero-consistent, glass tiles) */}
+      <section className="mx-auto mt-10 md:mt-12 max-w-[1200px]">
+        <motion.h2
+          {...fadeUp(0.05)}
+          className="mb-6 text-center text-[22px] font-semibold text-neutral-900 dark:text-white"
+        >
+          My Tech Stack
+        </motion.h2>
+
+        <motion.div
+          {...fadeUp(0.1)}
+          className="
+            grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6
+            gap-4 sm:gap-5 md:gap-6
+          "
+        >
           {techIcons.map((tech, i) => (
             <motion.div
-              key={tech.name}
-              initial={{ opacity: 0, scale: 0.9 }}
+              key={typeof tech.name === "string" ? tech.name : `tech-${i}`}
+              initial={{ opacity: 0, scale: 0.92 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.35, delay: i * 0.02 }}
               className="
-                group flex w-full max-w-[120px] flex-col items-center rounded-xl
-                border border-transparent bg-white/40 p-4 text-center shadow-sm
+                group flex w-full flex-col items-center justify-center
+                rounded-xl border border-neutral-200 bg-white/80 p-4 text-center shadow-sm
                 ring-1 ring-black/5 backdrop-blur
-                transition-all duration-300 hover:scale-105 hover:border-primary/30 hover:bg-white/60
-                dark:bg-white/5 dark:ring-white/10
+                transition-all duration-300 hover:scale-105 hover:border-brand/40 hover:shadow-md
+                dark:border-white/10 dark:bg-white/5 dark:ring-white/10
               "
-              aria-label={tech.name}
+              aria-label={typeof tech.name === "string" ? tech.name : undefined}
             >
               <div className="text-4xl transition-transform duration-300 group-hover:scale-110">
                 {tech.icon}
               </div>
-              <span className="mt-2 text-sm text-muted-foreground">{tech.name}</span>
+              <span className="mt-2 text-sm text-neutral-600 dark:text-white/70">
+                {tech.name}
+              </span>
             </motion.div>
           ))}
-        </div>
-      </motion.section>
+        </motion.div>
+      </section>
     </main>
   );
 }
