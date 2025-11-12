@@ -1,3 +1,4 @@
+// app/hero/page.tsx
 "use client";
 
 import Image from "next/image";
@@ -12,27 +13,13 @@ const fadeUp = (delay = 0): MotionProps => ({
   transition: { duration: 0.6, ease: "easeOut", delay },
 });
 
-export function HeroPage() {
+export default function HeroPage() {
   return (
     <section className="relative px-4 sm:px-6 lg:px-8 py-8 md:py-12">
       {/* Card container */}
-      <div
-        className="
-          mx-auto max-w-[1200px]
-          rounded-[28px] overflow-hidden
-          bg-white/80 backdrop-blur border border-neutral-200 shadow-[0_25px_80px_rgba(0,0,0,0.06)]
-          dark:bg-white/5 dark:border-white/10 dark:shadow-[0_25px_80px_rgba(0,0,0,.55)]
-        "
-      >
+      <div className="mx-auto max-w-[1200px] rounded-[28px] overflow-hidden bg-white/80 backdrop-blur border border-neutral-200 shadow-[0_25px_80px_rgba(0,0,0,0.06)] dark:bg-white/5 dark:border-white/10 dark:shadow-[0_25px_80px_rgba(0,0,0,.55)]">
         {/* Grid */}
-        <div
-          className="
-            grid items-center
-            gap-10 md:gap-12
-            p-6 sm:p-8 md:p-10
-            md:grid-cols-[minmax(0,1fr)_minmax(420px,520px)]
-          "
-        >
+        <div className="grid items-center gap-10 md:gap-12 p-6 sm:p-8 md:p-10 md:grid-cols-[minmax(0,1fr)_minmax(420px,520px)]">
           {/* LEFT: Text */}
           <motion.div
             initial={{ opacity: 0, x: -24 }}
@@ -43,11 +30,7 @@ export function HeroPage() {
             {/* name tag */}
             <motion.span
               {...fadeUp(0.1)}
-              className="
-                inline-flex items-center gap-2
-                text-xs font-semibold tracking-[0.2em] uppercase
-                text-neutral-700 dark:text-white/80
-              "
+              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-neutral-700 dark:text-white/80"
             >
               <span className="inline-block h-2 w-2 rounded-full bg-brand" />
               Eng Abdalla
@@ -56,11 +39,7 @@ export function HeroPage() {
             {/* headline */}
             <motion.h1
               {...fadeUp(0.2)}
-              className="
-                font-display font-extrabold leading-[1.05]
-                text-[clamp(2rem,4.2vw,3.5rem)]
-                text-neutral-950 dark:text-white
-              "
+              className="font-display font-extrabold leading-[1.05] text-[clamp(2rem,4.2vw,3.5rem)] text-neutral-950 dark:text-white"
             >
               Transforming Ideas
               <br />
@@ -70,10 +49,7 @@ export function HeroPage() {
             {/* copy */}
             <motion.p
               {...fadeUp(0.35)}
-              className="
-                max-w-[56ch] text-base md:text-[17px] leading-relaxed
-                text-neutral-600 dark:text-white/70
-              "
+              className="max-w-[56ch] text-base md:text-[17px] leading-relaxed text-neutral-600 dark:text-white/70"
             >
               I’m Eng Abdalla — I craft premium, performance-focused web
               experiences with modern stacks. Clean code, sleek UI, and real-world
@@ -119,13 +95,7 @@ export function HeroPage() {
               }}
             />
 
-            <div
-              className="
-                rounded-[26px] overflow-hidden
-                bg-neutral-50 border border-neutral-200 shadow-[0_20px_60px_rgba(0,0,0,.08)]
-                dark:bg-white/5 dark:border-white/10 dark:shadow-[0_25px_80px_rgba(0,0,0,.55)]
-              "
-            >
+            <div className="rounded-[26px] overflow-hidden bg-neutral-50 border border-neutral-200 shadow-[0_20px_60px_rgba(0,0,0,.08)] dark:bg-white/5 dark:border-white/10 dark:shadow-[0_25px_80px_rgba(0,0,0,.55)]">
               <Image
                 src="/eng.jpg"
                 alt="Eng Abdalla portrait"
@@ -146,6 +116,9 @@ export function HeroPage() {
         <div className="absolute left-[24%] top-[72%] h-1.5 w-1.5 rounded-full bg-neutral-300 dark:bg-white/20" />
         <div className="absolute right-[22%] top-[42%] h-1.5 w-1.5 rounded-full bg-brand/80 blur-[1px]" />
       </div>
+
+      {/* anchor for scroll-to-bottom behavior */}
+      <div id="end" className="mt-12" />
     </section>
   );
 }
